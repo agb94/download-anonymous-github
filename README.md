@@ -1,17 +1,23 @@
 # Download Anonymous GitHub
 
-Download an anonymized repository from [https://anonymous.4open.science/](https://anonymous.4open.science/)
+Want to download an anonymized repository from [https://anonymous.4open.science/](https://anonymous.4open.science/)?
 
+1. Clone this repository and install the dependency
 ```shell
 git clone https://github.com/agb94/download-anonymous-github
 cd download-anonymous-github
 pip install requests
-python download.py [repo] --savedir [dir]
 ```
+
+2. Download an anonymized repository
+```shell
+# To download https://anonymous.4open.science/r/<repo>
+python download.py <repo> --savedir <dir>
+```
+If you don't provide `--savedir` option, it is automatically set to `<repo>`.
 
 For example,
 ```shell
-python download.py 840c8c57-3c32-451e-bf12-0e20be300389 --savedir sample_repo
+python download.py 840c8c57-3c32-451e-bf12-0e20be300389 --savedir sample
 ```
-this command will download the repository [https://anonymous.4open.science/r/840c8c57-3c32-451e-bf12-0e20be300389](https://anonymous.4open.science/r/840c8c57-3c32-451e-bf12-0e20be300389) to `sample_repo/`.
-
+this command will clone the repository [https://anonymous.4open.science/r/840c8c57-3c32-451e-bf12-0e20be300389](https://anonymous.4open.science/r/840c8c57-3c32-451e-bf12-0e20be300389) to `sample/`.
