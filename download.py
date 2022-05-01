@@ -1,6 +1,7 @@
 import requests
 import os
 import argparse
+import time
 
 api_url = "https://anonymous.4open.science/api/repo/"
 repo_url = "https://anonymous.4open.science/r/"
@@ -33,11 +34,26 @@ if __name__ == "__main__":
     root_dir = r.json()
     files = get_children(root_dir, path="")
     print(f"{len(files)} are found.")
+
+    downloaded_files = []
     for filepath in files:
-        dirname = os.path.dirname(filepath)
-        dirname = os.path.join(savedir, dirname)
-        if dirname.strip() and not os.path.exists(dirname):
-            os.makedirs(dirname, exist_ok=True)
-        print(f"Downloading {filepath}...")
-        os.system(f"wget {api_url}/{repo}/file/{filepath} -P {dirname}")
-    print(f"The repository has been successfuly cloned to {savedir}")
+        try:
+            dirname = os.path.dirname(filepath)
+            dirname = os.path.join(savedir, dirname)
+            if dirname.strip() and not os.path.exists(dirname):
+                os.makedirs(dirname, exist_ok=True)
+            print(f"Downloading {filepath}...")
+            os.system(f"wget {api_url}/{repo}/file/{filepath} -P {dirname}")
+            downloaded_files.append(os.path.join(dirname, filepath))
+            time.sleep(1)
+        except KeyboardInterrupt as e:
+            raise e
+
+    unavailable_files = [
+        filepath for filepath in downloaded_files
+        if not os.path.exists(filepath)
+    ]
+    if unavailable_files:
+        print(f"Unable to download files: {unavailable_files}")
+    else: 
+        print(f"The repository has been successfuly cloned to {savedir}")
