@@ -33,18 +33,22 @@ if __name__ == "__main__":
     r = requests.get(f"{api_url}/{repo}/files")
     root_dir = r.json()
     files = get_children(root_dir, path="")
-    print(f"{len(files)} are found.")
+    print(f"{len(files)} files are found.")
 
     downloaded_files = []
     for filepath in files:
         try:
+            download_path = os.path.join(savedir, filepath)
+            if os.path.exists(download_path):
+                print(f"{download_path} already exists. Skipped")
+                continue
             dirname = os.path.dirname(filepath)
             dirname = os.path.join(savedir, dirname)
             if dirname.strip() and not os.path.exists(dirname):
                 os.makedirs(dirname, exist_ok=True)
             print(f"Downloading {filepath}...")
             os.system(f"wget {api_url}/{repo}/file/{filepath} -P {dirname}")
-            downloaded_files.append(os.path.join(savedir, filepath))
+            downloaded_files.append(download_path)
             time.sleep(1)
         except KeyboardInterrupt as e:
             raise e
