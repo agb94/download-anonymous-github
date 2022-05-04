@@ -44,7 +44,7 @@ if __name__ == "__main__":
                 os.makedirs(dirname, exist_ok=True)
             print(f"Downloading {filepath}...")
             os.system(f"wget {api_url}/{repo}/file/{filepath} -P {dirname}")
-            downloaded_files.append(os.path.join(dirname, filepath))
+            downloaded_files.append(os.path.join(savedir, filepath))
             time.sleep(1)
         except KeyboardInterrupt as e:
             raise e
