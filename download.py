@@ -17,17 +17,7 @@ def get_children(dirpath, path=""):
             all_files += get_children(dirpath[key], path=path+key+"/")
     return all_files
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('repo', type=str)
-    parser.add_argument('--savedir', type=str)
-    args = parser.parse_args()
-    repo = args.repo
-    if args.savedir is None:
-        savedir = repo
-    else:
-        savedir = args.savedir
-    
+def download_repo(repo, savedir, interval):
     print(f"Repository: {repo_url}/{repo}")
     print("Get the list of files..")
     r = requests.get(f"{api_url}/{repo}/files")
@@ -49,7 +39,7 @@ if __name__ == "__main__":
             print(f"Downloading {filepath}...")
             os.system(f"wget {api_url}/{repo}/file/{filepath} -P {dirname}")
             downloaded_files.append(download_path)
-            time.sleep(1)
+            time.sleep(interval)
         except KeyboardInterrupt as e:
             raise e
 
@@ -57,7 +47,24 @@ if __name__ == "__main__":
         filepath for filepath in downloaded_files
         if not os.path.exists(filepath)
     ]
+
+    return unavailable_files
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('repo', type=str)
+    parser.add_argument('--savedir', type=str)
+    parser.add_argument('--interval', type=float, default=1)
+    args = parser.parse_args()
+    repo = args.repo
+    if args.savedir is None:
+        savedir = repo
+    else:
+        savedir = args.savedir
+
+    unavailable_files = download_repo(args.repo, savedir, args.interval)
+
     if unavailable_files:
         print(f"Unable to download files: {unavailable_files}")
     else: 
-        print(f"The repository has been successfuly cloned to {savedir}")
+        print(f"The repository has been successfuly cloned to {os.path.abspath(savedir)}")
