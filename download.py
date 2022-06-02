@@ -17,7 +17,7 @@ def get_children(dirpath, path=""):
             all_files += get_children(dirpath[key], path=path+key+"/")
     return all_files
 
-def download_repo(repo, savedir, interval):
+def download_repo(repo, savedir, interval, file_types):
     print(f"Repository: {repo_url}/{repo}")
     print("Get the list of files..")
     r = requests.get(f"{api_url}/{repo}/files")
@@ -28,6 +28,10 @@ def download_repo(repo, savedir, interval):
     downloaded_files = []
     for filepath in files:
         try:
+            # check if file type is desired
+            if file_types and os.path.splitext(filepath)[1] not in file_types:
+                continue
+
             download_path = os.path.join(savedir, filepath)
             if os.path.exists(download_path):
                 print(f"{download_path} already exists. Skipped")
@@ -55,6 +59,8 @@ if __name__ == "__main__":
     parser.add_argument('repo', type=str)
     parser.add_argument('--savedir', type=str)
     parser.add_argument('--interval', type=float, default=1)
+    parser.add_argument('--file-types', nargs='*', default=[])
+
     args = parser.parse_args()
     repo = args.repo
     if args.savedir is None:
@@ -62,7 +68,7 @@ if __name__ == "__main__":
     else:
         savedir = args.savedir
 
-    unavailable_files = download_repo(args.repo, savedir, args.interval)
+    unavailable_files = download_repo(args.repo, savedir, args.interval, args.file_types)
 
     if unavailable_files:
         print(f"Unable to download files: {unavailable_files}")
