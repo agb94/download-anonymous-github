@@ -1,4 +1,4 @@
-# Download Anonymous GitHub
+# Cloning from Anonymous GitHub
 
 Want to download an anonymized repository from [https://anonymous.4open.science/](https://anonymous.4open.science/)?
 
